@@ -6,33 +6,43 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSlider } from './components/HeroSlider';
+import { CenterStorySection } from './components/CenterStorySection';
+import { CenterServicesGrid } from './components/CenterServicesGrid';
+import { ServiceBookingForm } from './components/ServiceBookingForm';
 import { CenterFacilitySection } from './components/CenterFacilitySection';
-import { BookingSection } from './components/BookingSection';
-import { ModelSelector } from './components/ModelSelector';
-import { CarConfigurator, SavedBuild } from './components/CarConfigurator';
-import { LifestyleShop } from './components/LifestyleShop';
 import { HeritageSoundSection } from './components/HeritageSoundSection';
-import { ExperienceCenters } from './components/ExperienceCenters';
 import { Footer } from './components/Footer';
-import { CartDrawer, CartItem } from './components/CartDrawer';
-import { GarageDrawer } from './components/GarageDrawer';
-import { SpecsModal } from './components/SpecsModal';
-import { TestDriveModal } from './components/TestDriveModal';
-import { QuickViewModal } from './components/QuickViewModal';
-import { SearchModal } from './components/SearchModal';
-import { RegionModal } from './components/RegionModal';
-import { BookingModal } from './components/BookingModal';
-import { CustomerBookingsModal } from './components/CustomerBookingsModal';
+import { ServiceBookingsViewerModal } from './components/ServiceBookingsViewerModal';
 import { AdminPanel } from './components/AdminPanel';
 import { INITIAL_CENTER_DATA } from './data/centerInitialData';
-import { CenterStoreData, BookingRecord } from './types/centerTypes';
-import { CarModel, LifestyleProduct } from './data/porscheData';
+import { CenterStoreData } from './types/centerTypes';
+import { Language, ThemeMode, ServiceBookingRecord } from './data/centerContentI18n';
 
 export default function App() {
+  // Language State: 'ar' (العربية) or 'en' (English)
+  const [lang, setLang] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem('porsche_lang');
+      return (saved === 'en' || saved === 'ar') ? saved : 'ar';
+    } catch {
+      return 'ar';
+    }
+  });
+
+  // Theme State: 'light' or 'dark'
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('porsche_theme');
+      return (saved === 'light' || saved === 'dark') ? saved : 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
   // Center Store Data (editable via Admin Panel with Cloudinary & device uploads)
   const [centerData, setCenterData] = useState<CenterStoreData>(() => {
     try {
-      const saved = localStorage.getItem('porsche_center_store_v2');
+      const saved = localStorage.getItem('porsche_center_store_v4');
       if (saved) {
         return JSON.parse(saved);
       }
@@ -42,48 +52,71 @@ export default function App() {
     return INITIAL_CENTER_DATA;
   });
 
-  // Cart state with localStorage
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+  // Service Maintenance Bookings
+  const [serviceBookings, setServiceBookings] = useState<ServiceBookingRecord[]>(() => {
     try {
-      const saved = localStorage.getItem('porsche_cart');
-      return saved ? JSON.parse(saved) : [];
+      const saved = localStorage.getItem('porsche_service_bookings');
+      if (saved) {
+        return JSON.parse(saved);
+      }
     } catch {
-      return [];
+      // fallback
     }
+    return [
+      {
+        id: 'init-1',
+        referenceCode: 'PSC-49102',
+        customerName: 'فهد السديري',
+        customerPhone: '+966 55 911 2024',
+        customerEmail: 'fahad@alsudairi.sa',
+        vehicleModel: '911 Carrera / Turbo / GT3 (992 / 991)',
+        vehicleYear: '2024',
+        serviceId: 'srv-periodic',
+        serviceTitle: 'الصيانة الدورية المعتمدة وفحص المحرك',
+        bookingDate: '2026-11-22',
+        timeSlot: '08:00 AM',
+        loanerCarRequested: true,
+        notes: 'فحص ضغط زيت المحرك عند درجات الحرارة العالية.',
+        status: 'Confirmed',
+        createdAt: '2026-10-16T10:00:00.000Z',
+      },
+    ];
   });
 
-  // Saved Garage builds state with localStorage
-  const [garageBuilds, setGarageBuilds] = useState<SavedBuild[]>(() => {
-    try {
-      const saved = localStorage.getItem('porsche_garage');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  // Region / Language
-  const [currentRegion, setCurrentRegion] = useState('US');
+  // Preselected service for the booking form
+  const [selectedServiceToBook, setSelectedServiceToBook] = useState<string | undefined>();
 
   // Modals & Panels State
   const [adminOpen, setAdminOpen] = useState(false);
-  const [bookingModalOpen, setBookingModalOpen] = useState(false);
-  const [selectedBookingServiceId, setSelectedBookingServiceId] = useState<string | undefined>();
-  const [selectedBookingVehicleName, setSelectedBookingVehicleName] = useState<string | undefined>();
-  const [customerBookingsOpen, setCustomerBookingsOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
-  const [garageOpen, setGarageOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [regionOpen, setRegionOpen] = useState(false);
-  const [testDriveOpen, setTestDriveOpen] = useState(false);
-  const [testDriveModel, setTestDriveModel] = useState('Porsche 911 GT3 RS');
-  const [specsModalCar, setSpecsModalCar] = useState<CarModel | null>(null);
-  const [quickViewProduct, setQuickViewProduct] = useState<LifestyleProduct | null>(null);
+  const [serviceBookingsOpen, setServiceBookingsOpen] = useState(false);
 
-  // Sync state to local storage
+  // Sync state to local storage and document root
   useEffect(() => {
     try {
-      localStorage.setItem('porsche_center_store_v2', JSON.stringify(centerData));
+      localStorage.setItem('porsche_lang', lang);
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+    } catch {
+      // fallback
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('porsche_theme', theme);
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch {
+      // fallback
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('porsche_center_store_v4', JSON.stringify(centerData));
     } catch (e) {
       console.warn('Could not save to localStorage', e);
     }
@@ -91,193 +124,154 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('porsche_cart', JSON.stringify(cartItems));
+      localStorage.setItem('porsche_service_bookings', JSON.stringify(serviceBookings));
     } catch {
-      // storage quota fallback
+      // fallback
     }
-  }, [cartItems]);
+  }, [serviceBookings]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('porsche_garage', JSON.stringify(garageBuilds));
-    } catch {
-      // storage quota fallback
-    }
-  }, [garageBuilds]);
+  // Handlers
+  const handleToggleLang = () => {
+    setLang((prev) => (prev === 'ar' ? 'en' : 'ar'));
+  };
 
-  // Admin Data Save & Reset
+  const handleToggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   const handleSaveAdminData = (newData: CenterStoreData) => {
     setCenterData(newData);
   };
 
   const handleResetDefaults = () => {
     setCenterData(INITIAL_CENTER_DATA);
-    localStorage.removeItem('porsche_center_store_v2');
+    localStorage.removeItem('porsche_center_store_v4');
   };
 
-  // Booking Handlers
-  const handleOpenBookingModal = (serviceId?: string, vehicleName?: string) => {
-    setSelectedBookingServiceId(serviceId);
-    setSelectedBookingVehicleName(vehicleName);
-    setBookingModalOpen(true);
-  };
-
-  const handleConfirmBooking = (newBooking: BookingRecord) => {
-    setCenterData((prev) => ({
-      ...prev,
-      bookings: [newBooking, ...prev.bookings],
-    }));
+  const handleBookingConfirmed = (newRecord: ServiceBookingRecord) => {
+    setServiceBookings((prev) => [newRecord, ...prev]);
   };
 
   const handleCancelBooking = (bookingId: string) => {
-    setCenterData((prev) => ({
-      ...prev,
-      bookings: prev.bookings.map((b) =>
-        b.id === bookingId ? { ...b, status: 'Cancelled' as const } : b
-      ),
-    }));
-  };
-
-  // Cart Handlers
-  const handleAddToCart = (product: LifestyleProduct) => {
-    setCartItems((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { product, quantity: 1 }];
-    });
-  };
-
-  const handleUpdateQuantity = (productId: string, quantity: number) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
+    setServiceBookings((prev) =>
+      prev.map((b) => (b.id === bookingId ? { ...b, status: 'Cancelled' as const } : b))
     );
   };
 
-  const handleRemoveCartItem = (productId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.product.id !== productId));
-  };
-
-  const handleClearCart = () => {
-    setCartItems([]);
-  };
-
-  // Garage Handlers
-  const handleSaveToGarage = (build: SavedBuild) => {
-    setGarageBuilds((prev) => [build, ...prev.filter((b) => b.id !== build.id)]);
-  };
-
-  const handleRemoveBuild = (id: string) => {
-    setGarageBuilds((prev) => prev.filter((b) => b.id !== id));
-  };
-
-  const handleLoadBuild = (_build: SavedBuild) => {
-    const configSection = document.getElementById('configurator');
-    if (configSection) {
-      configSection.scrollIntoView({ behavior: 'smooth' });
+  const handleSelectServiceFromGrid = (serviceId: string) => {
+    setSelectedServiceToBook(serviceId);
+    const formEl = document.getElementById('booking-form');
+    if (formEl) {
+      const navOffset = 78;
+      const elementPosition = formEl.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - navOffset,
+        behavior: 'smooth',
+      });
     }
   };
 
-  // Test Drive Handler
-  const handleOpenTestDrive = (modelName: string) => {
-    setTestDriveModel(modelName);
-    setTestDriveOpen(true);
-  };
-
-  const handleConfigureModel = (_car: CarModel) => {
-    const configSection = document.getElementById('configurator');
-    if (configSection) {
-      configSection.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBooking = () => {
+    const formEl = document.getElementById('booking-form');
+    if (formEl) {
+      const navOffset = 78;
+      const elementPosition = formEl.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: elementPosition - navOffset,
+        behavior: 'smooth',
+      });
     }
   };
 
-  const totalCartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const isAr = lang === 'ar';
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#f5f5f7] flex flex-col font-sans selection:bg-white selection:text-black">
-      {/* 1. Sticky Navigation Bar with Smooth Pills & Admin Trigger */}
+    <div
+      dir={isAr ? 'rtl' : 'ltr'}
+      className={`min-h-screen w-full max-w-[100vw] overflow-x-hidden transition-colors duration-300 font-sans ${
+        theme === 'light' ? 'theme-light bg-[#f8f9fb] text-[#0f1115]' : 'theme-dark bg-[#050507] text-[#f4f4f6]'
+      }`}
+    >
+      {/* 1. Sticky Navigation Bar with Language & Theme Switches */}
       <Navbar
         centerName={centerData.centerInfo.name}
-        cartCount={totalCartCount}
-        onOpenCart={() => setCartOpen(true)}
-        garageCount={garageBuilds.length}
-        onOpenGarage={() => setGarageOpen(true)}
-        bookingsCount={centerData.bookings.length}
-        onOpenBookings={() => setCustomerBookingsOpen(true)}
-        onOpenBookingModal={() => handleOpenBookingModal()}
+        lang={lang}
+        onToggleLang={handleToggleLang}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
+        bookingsCount={serviceBookings.length}
+        onOpenBookings={() => setServiceBookingsOpen(true)}
+        onOpenBookingForm={scrollToBooking}
         onOpenAdmin={() => setAdminOpen(true)}
-        onOpenSearch={() => setSearchOpen(true)}
-        onOpenRegion={() => setRegionOpen(true)}
-        currentRegion={currentRegion}
       />
 
       <main className="flex-1">
-        {/* 2. Hero Slider (Connected to Admin Slides & Device/Cloudinary Uploads) */}
+        {/* 2. Hero Showcase (Connected to Admin Slides & Device/Cloudinary Uploads) */}
         <HeroSlider
           slides={centerData.heroSlides}
-          onOpenBookingModal={handleOpenBookingModal}
-          onExploreFleet={() => {
-            const modelsEl = document.getElementById('models');
-            if (modelsEl) modelsEl.scrollIntoView({ behavior: 'smooth' });
+          lang={lang}
+          theme={theme}
+          onOpenBookingForm={scrollToBooking}
+          onExploreServices={() => {
+            const gridEl = document.getElementById('services-grid');
+            if (gridEl) {
+              const navOffset = 78;
+              const elementPosition = gridEl.getBoundingClientRect().top + window.pageYOffset;
+              window.scrollTo({
+                top: elementPosition - navOffset,
+                behavior: 'smooth',
+              });
+            }
           }}
         />
 
-        {/* 3. Center Facility & Handling Circuit Overview */}
+        {/* 3. Center Story & Certified Facility Overview (Fluid Cards - No Harsh Boxes) */}
+        <CenterStorySection
+          lang={lang}
+          theme={theme}
+          onBookNow={scrollToBooking}
+        />
+
+        {/* 4. Comprehensive Maintenance & Diagnostics Services Grid */}
+        <CenterServicesGrid
+          lang={lang}
+          theme={theme}
+          onSelectServiceToBook={handleSelectServiceFromGrid}
+        />
+
+        {/* 5. Direct Service Booking Form (Vehicle model, issue, time, loaner car, digital pass) */}
+        <ServiceBookingForm
+          lang={lang}
+          theme={theme}
+          preselectedServiceId={selectedServiceToBook}
+          onBookingConfirmed={handleBookingConfirmed}
+          onViewMyBookings={() => setServiceBookingsOpen(true)}
+        />
+
+        {/* 6. Certified Facility Workshop Bays, Cleanroom & VIP Lounge */}
         <CenterFacilitySection
           info={centerData.centerInfo}
           gallery={centerData.gallery}
-          onOpenBookingModal={() => handleOpenBookingModal()}
+          lang={lang}
+          theme={theme}
+          onOpenBooking={scrollToBooking}
         />
 
-        {/* 4. Dedicated Center Bookings & Workshop Services Section */}
-        <BookingSection
-          services={centerData.services}
-          fleet={centerData.fleet}
-          onOpenBookingModal={handleOpenBookingModal}
-          onOpenMyBookings={() => setCustomerBookingsOpen(true)}
-        />
-
-        {/* 5. Model Selector Grid (Smooth 3D-feel Cards) */}
-        <ModelSelector
-          onConfigureModel={handleConfigureModel}
-          onOpenSpecsModal={(car) => setSpecsModalCar(car)}
-          onOpenTestDrive={handleOpenTestDrive}
-        />
-
-        {/* 6. Interactive Car Configurator with 3+ Color Real-Time Switching */}
-        <CarConfigurator
-          onSaveToGarage={handleSaveToGarage}
-          onOpenTestDrive={handleOpenTestDrive}
-        />
-
-        {/* 7. Luxury Lifestyle Shop & Boutique */}
-        <LifestyleShop
-          onAddToCart={handleAddToCart}
-          onQuickView={(product) => setQuickViewProduct(product)}
-        />
-
-        {/* 8. Acoustic Sound Engine Simulator */}
-        <HeritageSoundSection />
-
-        {/* 9. Experience Centers Destinations */}
-        <ExperienceCenters
-          onBookExperience={(centerName) => {
-            handleOpenBookingModal(undefined, `Track Session - ${centerName}`);
-          }}
+        {/* 7. Acoustic Flat-6 Sound Engine Rev Simulator */}
+        <HeritageSoundSection
+          lang={lang}
+          theme={theme}
         />
       </main>
 
-      {/* Global Minimalist Footer */}
-      <Footer />
+      {/* Global Minimalist Footer with Location & Hours */}
+      <Footer
+        lang={lang}
+        theme={theme}
+        onOpenBooking={scrollToBooking}
+      />
 
-      {/* Admin Panel (Change text & upload photos from device/Cloudinary with live preview) */}
+      {/* Admin Panel (Edit text, upload images from device/Cloudinary with live preview) */}
       <AdminPanel
         isOpen={adminOpen}
         onClose={() => setAdminOpen(false)}
@@ -286,84 +280,14 @@ export default function App() {
         onResetDefaults={handleResetDefaults}
       />
 
-      {/* 4-Step Interactive Booking Modal with Circuit Pass Generation */}
-      <BookingModal
-        isOpen={bookingModalOpen}
-        onClose={() => setBookingModalOpen(false)}
-        services={centerData.services}
-        fleet={centerData.fleet}
-        selectedServiceId={selectedBookingServiceId}
-        selectedVehicleName={selectedBookingVehicleName}
-        onConfirmBooking={handleConfirmBooking}
-      />
-
-      {/* Customer Active Reservations & Passes Tracker */}
-      <CustomerBookingsModal
-        isOpen={customerBookingsOpen}
-        onClose={() => setCustomerBookingsOpen(false)}
-        bookings={centerData.bookings}
+      {/* Customer Service Appointments Lookup Modal */}
+      <ServiceBookingsViewerModal
+        isOpen={serviceBookingsOpen}
+        onClose={() => setServiceBookingsOpen(false)}
+        bookings={serviceBookings}
         onCancelBooking={handleCancelBooking}
-      />
-
-      {/* Slide-out Cart Drawer */}
-      <CartDrawer
-        isOpen={cartOpen}
-        onClose={() => setCartOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveCartItem}
-        onClearCart={handleClearCart}
-      />
-
-      {/* Slide-out Garage Drawer */}
-      <GarageDrawer
-        isOpen={garageOpen}
-        onClose={() => setGarageOpen(false)}
-        builds={garageBuilds}
-        onRemoveBuild={handleRemoveBuild}
-        onLoadBuild={handleLoadBuild}
-        onOpenTestDrive={handleOpenTestDrive}
-      />
-
-      {/* Technical Specs Modal */}
-      <SpecsModal
-        car={specsModalCar}
-        onClose={() => setSpecsModalCar(null)}
-        onConfigure={(car) => {
-          setSpecsModalCar(null);
-          handleConfigureModel(car);
-        }}
-        onOpenTestDrive={handleOpenTestDrive}
-      />
-
-      {/* VIP Test Drive Modal */}
-      <TestDriveModal
-        isOpen={testDriveOpen}
-        onClose={() => setTestDriveOpen(false)}
-        selectedModelName={testDriveModel}
-      />
-
-      {/* Product Quick View Modal */}
-      <QuickViewModal
-        product={quickViewProduct}
-        onClose={() => setQuickViewProduct(null)}
-        onAddToCart={handleAddToCart}
-      />
-
-      {/* Global Search Modal */}
-      <SearchModal
-        isOpen={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        onSelectCar={(car) => setSpecsModalCar(car)}
-        onSelectProduct={(product) => setQuickViewProduct(product)}
-      />
-
-      {/* Global Region & Currency Switcher Modal */}
-      <RegionModal
-        isOpen={regionOpen}
-        onClose={() => setRegionOpen(false)}
-        currentRegion={currentRegion}
-        onSelectRegion={(reg) => setCurrentRegion(reg)}
+        lang={lang}
+        theme={theme}
       />
     </div>
   );

@@ -239,73 +239,68 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Top Horizontal Segmented Tabs Bar (No Left Sidebar!) */}
+      <div className="px-6 py-3 bg-neutral-950/95 border-b border-white/10 flex items-center justify-between gap-4 overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-white/5 rounded-full overflow-x-auto">
+          {[
+            { id: 'info', label: 'بيانات ونصوص المركز (Center Info)', icon: FileText },
+            { id: 'slides', label: 'الشرائح والصور (Hero Slides)', icon: Layers },
+            { id: 'services', label: 'خدمات الصيانة (Services)', icon: Sliders },
+            { id: 'bookings', label: 'سجل الحجوزات (Bookings)', icon: Calendar, badge: formData.bookings.length },
+            { id: 'gallery', label: 'معرض المركز (Gallery)', icon: ImageIcon },
+            { id: 'cloudinary', label: 'إعدادات كلاودينري (Cloudinary)', icon: Cloud },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  soundEngine.playClick(850);
+                  setActiveTab(tab.id as AdminTab);
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'bg-white text-black font-bold shadow-md'
+                    : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+                {tab.badge !== undefined && (
+                  <span
+                    className={`text-[10px] font-mono px-2 py-0.2 rounded-full ${
+                      isActive ? 'bg-black text-white' : 'bg-white/10 text-neutral-300'
+                    }`}
+                  >
+                    {tab.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            if (confirm('استعادة الإعدادات والنصوص والصور الأصلية للمركز؟')) {
+              soundEngine.playClick(600);
+              onResetDefaults();
+            }
+          }}
+          className="px-4 py-2 rounded-full text-xs font-mono uppercase text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition-colors flex items-center gap-1.5 shrink-0"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">إعادة تعيين المصنع</span>
+        </button>
+      </div>
+
+      {/* Main Container - Full Width Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Navigation Bar */}
-        <aside className="w-64 bg-neutral-950/80 border-r border-white/10 p-4 flex flex-col justify-between shrink-0">
-          <nav className="space-y-1">
-            {[
-              { id: 'info', label: 'Center Texts & Info', icon: FileText },
-              { id: 'slides', label: 'Hero Slides & Photos', icon: Layers },
-              { id: 'services', label: 'Packages & Services', icon: Sliders },
-              { id: 'fleet', label: 'Vehicle Fleet', icon: Car },
-              { id: 'bookings', label: 'Bookings & Guests', icon: Calendar, badge: formData.bookings.length },
-              { id: 'gallery', label: 'Facility Gallery', icon: ImageIcon },
-              { id: 'cloudinary', label: 'Cloudinary API Setup', icon: Cloud },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => {
-                    soundEngine.playClick(850);
-                    setActiveTab(tab.id as AdminTab);
-                  }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase transition-all ${
-                    isActive
-                      ? 'bg-white text-black shadow-md font-bold'
-                      : 'text-neutral-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </div>
-                  {tab.badge !== undefined && (
-                    <span
-                      className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                        isActive ? 'bg-black text-white' : 'bg-white/10 text-neutral-300'
-                      }`}
-                    >
-                      {tab.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          <div className="pt-4 border-t border-white/10 space-y-2">
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm('Reset all website text, images, and services back to factory defaults?')) {
-                  soundEngine.playClick(600);
-                  onResetDefaults();
-                }
-              }}
-              className="w-full py-2 px-3 rounded-lg text-[11px] font-mono uppercase text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors flex items-center justify-center gap-1.5"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Reset Factory Defaults</span>
-            </button>
-          </div>
-        </aside>
-
         {/* Content Workspace */}
-        <main className="flex-1 overflow-y-auto p-6 sm:p-8">
+        <main className="flex-1 overflow-y-auto p-6 sm:p-10">
           {/* TAB 1: CENTER INFO */}
           {activeTab === 'info' && (
             <div className="max-w-4xl space-y-6 animate-in fade-in duration-200">
@@ -332,7 +327,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, name: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white font-medium"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white font-medium"
                   />
                 </div>
 
@@ -349,7 +344,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, subName: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white"
                   />
                 </div>
 
@@ -366,7 +361,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, tagline: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white"
                   />
                 </div>
 
@@ -383,7 +378,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, announcementNotice: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white font-mono"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white font-mono"
                   />
                 </div>
 
@@ -400,7 +395,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, description: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white resize-none"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-white resize-none"
                   />
                 </div>
 
@@ -417,7 +412,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, phone: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white font-mono"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white font-mono"
                   />
                 </div>
 
@@ -434,7 +429,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, email: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white"
                   />
                 </div>
 
@@ -451,7 +446,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, address: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white"
                   />
                 </div>
 
@@ -468,7 +463,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         centerInfo: { ...formData.centerInfo, workingHours: e.target.value },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white"
                   />
                 </div>
               </div>
@@ -496,7 +491,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     key={slide.id}
                     type="button"
                     onClick={() => setActiveSlideIdx(idx)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${
+                    className={`px-4 py-2 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-all ${
                       activeSlideIdx === idx
                         ? 'bg-white text-black font-bold'
                         : 'bg-white/5 text-neutral-400 hover:text-white'
@@ -562,7 +557,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             newSlides[activeSlideIdx] = { ...slide, model: e.target.value };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-white font-bold"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-white font-bold"
                         />
                       </div>
 
@@ -578,7 +573,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             newSlides[activeSlideIdx] = { ...slide, subtitle: e.target.value };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-white"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-white"
                         />
                       </div>
 
@@ -594,7 +589,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             newSlides[activeSlideIdx] = { ...slide, headline: e.target.value };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-white font-semibold"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-white font-semibold"
                         />
                       </div>
 
@@ -613,7 +608,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-xs text-white font-mono"
                         />
                       </div>
 
@@ -632,7 +627,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-xs text-white font-mono"
                         />
                       </div>
 
@@ -651,7 +646,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-xs text-white font-mono"
                         />
                       </div>
 
@@ -667,7 +662,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             newSlides[activeSlideIdx] = { ...slide, priceFrom: e.target.value };
                             setFormData({ ...formData, heroSlides: newSlides });
                           }}
-                          className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white font-mono"
+                          className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2 text-xs text-white font-mono"
                         />
                       </div>
                     </div>
@@ -723,7 +718,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                               updated[idx] = { ...srv, title: e.target.value };
                               setFormData({ ...formData, services: updated });
                             }}
-                            className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-bold"
+                            className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3 py-1.5 text-xs text-white font-bold"
                           />
                         </div>
 
@@ -739,7 +734,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                               updated[idx] = { ...srv, price: Number(e.target.value) };
                               setFormData({ ...formData, services: updated });
                             }}
-                            className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-mono"
+                            className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3 py-1.5 text-xs text-white font-mono"
                           />
                         </div>
 
@@ -755,7 +750,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                               updated[idx] = { ...srv, duration: e.target.value };
                               setFormData({ ...formData, services: updated });
                             }}
-                            className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white"
+                            className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3 py-1.5 text-xs text-white"
                           />
                         </div>
 
@@ -771,7 +766,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                               updated[idx] = { ...srv, description: e.target.value };
                               setFormData({ ...formData, services: updated });
                             }}
-                            className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white resize-none"
+                            className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3 py-1.5 text-xs text-white resize-none"
                           />
                         </div>
                       </div>
@@ -824,7 +819,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                           updated[idx] = { ...car, name: e.target.value };
                           setFormData({ ...formData, fleet: updated });
                         }}
-                        className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-bold"
+                        className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3 py-1.5 text-xs text-white font-bold"
                       />
                     </div>
 
@@ -995,7 +990,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                           updated[idx] = { ...item, title: e.target.value };
                           setFormData({ ...formData, gallery: updated });
                         }}
-                        className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white font-bold"
+                        className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3 py-1.5 text-xs text-white font-bold"
                       />
                     </div>
                   </div>
@@ -1046,7 +1041,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white font-mono"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white font-mono"
                   />
                 </div>
 
@@ -1067,7 +1062,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                         },
                       })
                     }
-                    className="w-full bg-neutral-900 border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white font-mono"
+                    className="w-full bg-neutral-900 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-white font-mono"
                   />
                 </div>
 
@@ -1161,7 +1156,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {formData.services.slice(0, 3).map((srv) => (
                   <div key={srv.id} className="p-4 rounded-2xl bg-neutral-900/60 border border-white/10">
-                    <img src={srv.image} alt={srv.title} className="w-full h-32 object-cover rounded-xl mb-3" />
+                    <img src={srv.image} alt={srv.title} className="w-full h-32 object-cover rounded-2xl mb-3" />
                     <h5 className="text-sm font-bold text-white uppercase">{srv.title}</h5>
                     <p className="text-xs text-neutral-400 mt-1 line-clamp-2">{srv.description}</p>
                     <div className="mt-3 text-sm font-mono font-bold text-white">
