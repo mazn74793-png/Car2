@@ -1,0 +1,6 @@
+{
+  "name": "PORSCHE Luxury Showcase & Configurator",
+  "description": "Premium luxury automotive showcase, interactive vehicle configurator, and lifestyle storefront inspired by Porsche.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
