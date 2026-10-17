@@ -6,6 +6,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroSlider } from './components/HeroSlider';
+import { CenterFacilitySection } from './components/CenterFacilitySection';
+import { BookingSection } from './components/BookingSection';
 import { ModelSelector } from './components/ModelSelector';
 import { CarConfigurator, SavedBuild } from './components/CarConfigurator';
 import { LifestyleShop } from './components/LifestyleShop';
@@ -19,9 +21,27 @@ import { TestDriveModal } from './components/TestDriveModal';
 import { QuickViewModal } from './components/QuickViewModal';
 import { SearchModal } from './components/SearchModal';
 import { RegionModal } from './components/RegionModal';
-import { CarModel, LifestyleProduct, LIFESTYLE_PRODUCTS, CAR_MODELS } from './data/porscheData';
+import { BookingModal } from './components/BookingModal';
+import { CustomerBookingsModal } from './components/CustomerBookingsModal';
+import { AdminPanel } from './components/AdminPanel';
+import { INITIAL_CENTER_DATA } from './data/centerInitialData';
+import { CenterStoreData, BookingRecord } from './types/centerTypes';
+import { CarModel, LifestyleProduct } from './data/porscheData';
 
 export default function App() {
+  // Center Store Data (editable via Admin Panel with Cloudinary & device uploads)
+  const [centerData, setCenterData] = useState<CenterStoreData>(() => {
+    try {
+      const saved = localStorage.getItem('porsche_center_store_v2');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // fallback
+    }
+    return INITIAL_CENTER_DATA;
+  });
+
   // Cart state with localStorage
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
@@ -45,7 +65,12 @@ export default function App() {
   // Region / Language
   const [currentRegion, setCurrentRegion] = useState('US');
 
-  // Modal states
+  // Modals & Panels State
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [selectedBookingServiceId, setSelectedBookingServiceId] = useState<string | undefined>();
+  const [selectedBookingVehicleName, setSelectedBookingVehicleName] = useState<string | undefined>();
+  const [customerBookingsOpen, setCustomerBookingsOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [garageOpen, setGarageOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -55,7 +80,15 @@ export default function App() {
   const [specsModalCar, setSpecsModalCar] = useState<CarModel | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<LifestyleProduct | null>(null);
 
-  // Sync to local storage
+  // Sync state to local storage
+  useEffect(() => {
+    try {
+      localStorage.setItem('porsche_center_store_v2', JSON.stringify(centerData));
+    } catch (e) {
+      console.warn('Could not save to localStorage', e);
+    }
+  }, [centerData]);
+
   useEffect(() => {
     try {
       localStorage.setItem('porsche_cart', JSON.stringify(cartItems));
@@ -71,6 +104,39 @@ export default function App() {
       // storage quota fallback
     }
   }, [garageBuilds]);
+
+  // Admin Data Save & Reset
+  const handleSaveAdminData = (newData: CenterStoreData) => {
+    setCenterData(newData);
+  };
+
+  const handleResetDefaults = () => {
+    setCenterData(INITIAL_CENTER_DATA);
+    localStorage.removeItem('porsche_center_store_v2');
+  };
+
+  // Booking Handlers
+  const handleOpenBookingModal = (serviceId?: string, vehicleName?: string) => {
+    setSelectedBookingServiceId(serviceId);
+    setSelectedBookingVehicleName(vehicleName);
+    setBookingModalOpen(true);
+  };
+
+  const handleConfirmBooking = (newBooking: BookingRecord) => {
+    setCenterData((prev) => ({
+      ...prev,
+      bookings: [newBooking, ...prev.bookings],
+    }));
+  };
+
+  const handleCancelBooking = (bookingId: string) => {
+    setCenterData((prev) => ({
+      ...prev,
+      bookings: prev.bookings.map((b) =>
+        b.id === bookingId ? { ...b, status: 'Cancelled' as const } : b
+      ),
+    }));
+  };
 
   // Cart Handlers
   const handleAddToCart = (product: LifestyleProduct) => {
@@ -112,7 +178,7 @@ export default function App() {
     setGarageBuilds((prev) => prev.filter((b) => b.id !== id));
   };
 
-  const handleLoadBuild = (build: SavedBuild) => {
+  const handleLoadBuild = (_build: SavedBuild) => {
     const configSection = document.getElementById('configurator');
     if (configSection) {
       configSection.scrollIntoView({ behavior: 'smooth' });
@@ -125,8 +191,7 @@ export default function App() {
     setTestDriveOpen(true);
   };
 
-  // Configurator transition
-  const handleConfigureModel = (car: CarModel) => {
+  const handleConfigureModel = (_car: CarModel) => {
     const configSection = document.getElementById('configurator');
     if (configSection) {
       configSection.scrollIntoView({ behavior: 'smooth' });
@@ -137,60 +202,108 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#f5f5f7] flex flex-col font-sans selection:bg-white selection:text-black">
-      {/* 1. Sticky Navigation Bar */}
+      {/* 1. Sticky Navigation Bar with Smooth Pills & Admin Trigger */}
       <Navbar
+        centerName={centerData.centerInfo.name}
         cartCount={totalCartCount}
         onOpenCart={() => setCartOpen(true)}
         garageCount={garageBuilds.length}
         onOpenGarage={() => setGarageOpen(true)}
+        bookingsCount={centerData.bookings.length}
+        onOpenBookings={() => setCustomerBookingsOpen(true)}
+        onOpenBookingModal={() => handleOpenBookingModal()}
+        onOpenAdmin={() => setAdminOpen(true)}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenRegion={() => setRegionOpen(true)}
         currentRegion={currentRegion}
       />
 
       <main className="flex-1">
-        {/* 2. Hero Slider with Flagship Models & Acoustic Rev */}
+        {/* 2. Hero Slider (Connected to Admin Slides & Device/Cloudinary Uploads) */}
         <HeroSlider
-          onSelectModel={(modelName) => {
-            const car = CAR_MODELS.find((c) => c.name.includes(modelName));
-            if (car) setSpecsModalCar(car);
+          slides={centerData.heroSlides}
+          onOpenBookingModal={handleOpenBookingModal}
+          onExploreFleet={() => {
+            const modelsEl = document.getElementById('models');
+            if (modelsEl) modelsEl.scrollIntoView({ behavior: 'smooth' });
           }}
-          onOpenTestDrive={handleOpenTestDrive}
         />
 
-        {/* 3. Model Selector Grid (All, Gasoline, Hybrid, All-Electric) */}
+        {/* 3. Center Facility & Handling Circuit Overview */}
+        <CenterFacilitySection
+          info={centerData.centerInfo}
+          gallery={centerData.gallery}
+          onOpenBookingModal={() => handleOpenBookingModal()}
+        />
+
+        {/* 4. Dedicated Center Bookings & Workshop Services Section */}
+        <BookingSection
+          services={centerData.services}
+          fleet={centerData.fleet}
+          onOpenBookingModal={handleOpenBookingModal}
+          onOpenMyBookings={() => setCustomerBookingsOpen(true)}
+        />
+
+        {/* 5. Model Selector Grid (Smooth 3D-feel Cards) */}
         <ModelSelector
           onConfigureModel={handleConfigureModel}
           onOpenSpecsModal={(car) => setSpecsModalCar(car)}
           onOpenTestDrive={handleOpenTestDrive}
         />
 
-        {/* 4. Interactive Car Configurator with 3+ Color Switching, Wheels, Interior, Calipers */}
+        {/* 6. Interactive Car Configurator with 3+ Color Real-Time Switching */}
         <CarConfigurator
           onSaveToGarage={handleSaveToGarage}
           onOpenTestDrive={handleOpenTestDrive}
         />
 
-        {/* 5. Luxury Lifestyle Shop (Watches, Bags, Soundbar, Apparel) */}
+        {/* 7. Luxury Lifestyle Shop & Boutique */}
         <LifestyleShop
           onAddToCart={handleAddToCart}
           onQuickView={(product) => setQuickViewProduct(product)}
         />
 
-        {/* 6. Heritage & Acoustic Engine Simulator (Flat-6 boxer tachometer) */}
+        {/* 8. Acoustic Sound Engine Simulator */}
         <HeritageSoundSection />
 
-        {/* 7. Porsche Experience Centers & Circuits */}
+        {/* 9. Experience Centers Destinations */}
         <ExperienceCenters
           onBookExperience={(centerName) => {
-            setTestDriveModel(`Track Masterclass - ${centerName}`);
-            setTestDriveOpen(true);
+            handleOpenBookingModal(undefined, `Track Session - ${centerName}`);
           }}
         />
       </main>
 
-      {/* 8. Global Minimalist Footer */}
+      {/* Global Minimalist Footer */}
       <Footer />
+
+      {/* Admin Panel (Change text & upload photos from device/Cloudinary with live preview) */}
+      <AdminPanel
+        isOpen={adminOpen}
+        onClose={() => setAdminOpen(false)}
+        data={centerData}
+        onSaveData={handleSaveAdminData}
+        onResetDefaults={handleResetDefaults}
+      />
+
+      {/* 4-Step Interactive Booking Modal with Circuit Pass Generation */}
+      <BookingModal
+        isOpen={bookingModalOpen}
+        onClose={() => setBookingModalOpen(false)}
+        services={centerData.services}
+        fleet={centerData.fleet}
+        selectedServiceId={selectedBookingServiceId}
+        selectedVehicleName={selectedBookingVehicleName}
+        onConfirmBooking={handleConfirmBooking}
+      />
+
+      {/* Customer Active Reservations & Passes Tracker */}
+      <CustomerBookingsModal
+        isOpen={customerBookingsOpen}
+        onClose={() => setCustomerBookingsOpen(false)}
+        bookings={centerData.bookings}
+        onCancelBooking={handleCancelBooking}
+      />
 
       {/* Slide-out Cart Drawer */}
       <CartDrawer
@@ -223,7 +336,7 @@ export default function App() {
         onOpenTestDrive={handleOpenTestDrive}
       />
 
-      {/* VIP Test Drive & Track Session Modal */}
+      {/* VIP Test Drive Modal */}
       <TestDriveModal
         isOpen={testDriveOpen}
         onClose={() => setTestDriveOpen(false)}

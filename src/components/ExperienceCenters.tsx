@@ -54,9 +54,9 @@ export const ExperienceCenters: React.FC<ExperienceCentersProps> = ({ onBookExpe
           {centers.map((c) => (
             <div
               key={c.name}
-              className="group bg-neutral-900/50 border border-white/10 hover:border-white/30 transition-all flex flex-col justify-between"
+              className="group smooth-glass-card rounded-3xl overflow-hidden flex flex-col justify-between"
             >
-              <div className="relative aspect-[16/10] overflow-hidden bg-neutral-950">
+              <div className="relative aspect-[16/10] overflow-hidden bg-neutral-950 rounded-t-3xl">
                 <img
                   src={c.image}
                   alt={c.name}
@@ -64,7 +64,7 @@ export const ExperienceCenters: React.FC<ExperienceCentersProps> = ({ onBookExpe
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/20 to-transparent" />
-                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-xs font-mono text-white">
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-xs font-mono text-white bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
                   <MapPin className="w-3.5 h-3.5 text-[#d5001c]" />
                   <span>{c.location}</span>
                 </div>
@@ -78,8 +78,8 @@ export const ExperienceCenters: React.FC<ExperienceCentersProps> = ({ onBookExpe
                   <p className="text-xs text-neutral-400 font-light leading-relaxed mb-3">
                     {c.track}
                   </p>
-                  <div className="text-[11px] font-mono text-neutral-300 bg-white/5 p-2.5 border border-white/10">
-                    <span className="text-neutral-400 block text-[9px] uppercase tracking-wider">
+                  <div className="text-[11px] font-mono text-neutral-300 bg-white/5 p-3 rounded-2xl border border-white/10">
+                    <span className="text-neutral-400 block text-[9px] uppercase tracking-wider mb-0.5">
                       Featured Program
                     </span>
                     {c.highlight}
@@ -92,7 +92,7 @@ export const ExperienceCenters: React.FC<ExperienceCentersProps> = ({ onBookExpe
                     soundEngine.playClick(1000);
                     onBookExperience(c.name);
                   }}
-                  className="w-full py-3 text-xs font-bold tracking-widest uppercase bg-white/10 hover:bg-white text-white hover:text-black border border-white/20 transition-all duration-300 flex items-center justify-center gap-1.5"
+                  className="w-full py-3 rounded-full text-xs font-bold tracking-widest uppercase bg-white/10 hover:bg-white text-white hover:text-black border border-white/20 transition-all duration-300 flex items-center justify-center gap-1.5 shadow-md"
                 >
                   <Calendar className="w-3.5 h-3.5" />
                   <span>Reserve Track Program</span>

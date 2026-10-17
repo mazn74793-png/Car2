@@ -36,7 +36,7 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
             <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.3em] uppercase text-neutral-400 mb-2">
               <span>Porsche Design</span>
               <span aria-hidden="true">·</span>
-              <span>Lifestyle & Performance Goods</span>
+              <span>Center Boutique</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight uppercase [text-wrap:balance]">
               The Lifestyle Collection
@@ -47,9 +47,9 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
           </p>
         </div>
 
-        {/* Category Tabs */}
+        {/* Category Tabs (Smooth Pill Bar) */}
         <div className="py-8 flex items-center justify-between gap-4 overflow-x-auto">
-          <div className="flex items-center gap-1 p-1 bg-white/5 border border-white/10 rounded-lg">
+          <div className="flex items-center gap-1.5 p-1.5 bg-neutral-900/80 border border-white/10 rounded-full">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -58,9 +58,9 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
                   soundEngine.playClick(900);
                   setSelectedCategory(cat);
                 }}
-                className={`px-4 py-2 text-xs font-medium tracking-wider uppercase transition-colors whitespace-nowrap rounded-md ${
+                className={`px-5 py-2 text-xs font-semibold tracking-wider uppercase transition-all whitespace-nowrap rounded-full ${
                   selectedCategory === cat
-                    ? 'bg-white text-black font-semibold shadow-sm'
+                    ? 'bg-white text-black font-bold shadow-md'
                     : 'text-neutral-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -72,21 +72,21 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
           <div className="hidden sm:flex items-center gap-2 text-xs text-neutral-400 font-mono">
             <span>Complimentary Global Express Delivery</span>
             <span aria-hidden="true">·</span>
-            <span>2-Year Manufacturer Warranty</span>
+            <span>2-Year Warranty</span>
           </div>
         </div>
 
-        {/* Product Cards Grid */}
+        {/* Product Cards Grid (Smooth Rounded-3xl Cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
           {filteredProducts.map((product) => {
             const isAdded = recentlyAddedId === product.id;
             return (
               <div
                 key={product.id}
-                className="group flex flex-col justify-between bg-neutral-900/40 border border-white/10 hover:border-white/30 transition-all duration-500 overflow-hidden"
+                className="group smooth-glass-card rounded-3xl flex flex-col justify-between overflow-hidden"
               >
                 {/* Product Image Stage */}
-                <div className="relative aspect-[4/3] bg-neutral-950 overflow-hidden">
+                <div className="relative aspect-[4/3] bg-neutral-950 overflow-hidden rounded-t-3xl">
                   <img
                     src={product.image}
                     alt={product.name}
@@ -96,7 +96,7 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
                   <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/60 via-transparent to-transparent pointer-events-none" />
 
                   {/* Clean unboxed tag */}
-                  <div className="absolute top-3 left-3 text-[10px] tracking-widest uppercase font-mono text-neutral-300">
+                  <div className="absolute top-3 left-3 text-[10px] tracking-widest uppercase font-mono text-neutral-300 bg-black/60 px-3 py-1 rounded-full border border-white/15">
                     {product.tag}
                   </div>
 
@@ -134,7 +134,7 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
                     </p>
                   </div>
 
-                  {/* Price & Add to Bag */}
+                  {/* Price & Add to Bag (Smooth pill button) */}
                   <div className="pt-3 border-t border-white/5 flex items-center justify-between gap-3">
                     <span className="text-base font-bold font-mono text-white tabular-nums">
                       ${product.price.toLocaleString()}
@@ -143,7 +143,7 @@ export const LifestyleShop: React.FC<LifestyleShopProps> = ({ onAddToCart, onQui
                     <button
                       type="button"
                       onClick={() => handleAdd(product)}
-                      className={`px-3 py-2 text-xs font-semibold tracking-wider uppercase transition-all duration-300 flex items-center gap-1.5 ${
+                      className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 flex items-center gap-1.5 shadow-md ${
                         isAdded
                           ? 'bg-emerald-600 text-white'
                           : 'bg-white text-black hover:bg-neutral-200'

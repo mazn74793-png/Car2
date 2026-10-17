@@ -64,11 +64,11 @@ export const HeritageSoundSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Interactive Acoustic Cockpit Experience */}
-        <div className="bg-neutral-900/60 border border-white/10 p-8 sm:p-12 mb-16">
+        {/* Interactive Acoustic Cockpit Experience (Smooth Rounded-3xl) */}
+        <div className="bg-neutral-900/60 border border-white/10 rounded-3xl p-8 sm:p-12 mb-16 shadow-2xl backdrop-blur-xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left: Tachometer Display */}
-            <div className="lg:col-span-6 flex flex-col items-center justify-center p-6 bg-black/80 border border-white/10 rounded-sm">
+            <div className="lg:col-span-6 flex flex-col items-center justify-center p-8 bg-black/80 border border-white/10 rounded-3xl shadow-inner">
               <div className="relative w-64 h-64 flex flex-col items-center justify-center">
                 {/* Dial circle */}
                 <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
@@ -112,7 +112,7 @@ export const HeritageSoundSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Shift Light Array */}
+              {/* Shift Light Array (Smooth Rounded-Full) */}
               <div className="flex items-center gap-2 mt-4">
                 {[1, 2, 3, 4, 5, 6, 7].map((barIdx) => {
                   const threshold = barIdx * 1200;
@@ -121,7 +121,7 @@ export const HeritageSoundSection: React.FC = () => {
                   return (
                     <div
                       key={barIdx}
-                      className={`h-2 w-6 transition-all duration-100 ${
+                      className={`h-2 w-6 rounded-full transition-all duration-100 ${
                         active
                           ? isRedline
                             ? 'bg-[#d5001c] shadow-[0_0_8px_#d5001c]'
@@ -148,7 +148,7 @@ export const HeritageSoundSection: React.FC = () => {
                 </p>
               </div>
 
-              <div className="p-4 bg-white/5 border border-white/10 text-xs font-mono space-y-2">
+              <div className="p-4 bg-white/5 border border-white/10 rounded-2xl text-xs font-mono space-y-2">
                 <div className="flex justify-between">
                   <span className="text-neutral-400">Engine Type</span>
                   <span className="text-white">4.0L Aluminum Boxer 6</span>
@@ -168,7 +168,7 @@ export const HeritageSoundSection: React.FC = () => {
                   type="button"
                   onClick={handleThrottleRev}
                   disabled={isPlaying}
-                  className={`w-full sm:w-auto px-8 py-4 text-xs font-bold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 ${
+                  className={`w-full sm:w-auto px-8 py-4 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2 shadow-xl ${
                     isPlaying
                       ? 'bg-[#d5001c] text-white shadow-[0_0_20px_rgba(213,0,28,0.5)] cursor-not-allowed'
                       : 'bg-white text-black hover:bg-neutral-200'
@@ -186,12 +186,12 @@ export const HeritageSoundSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 4 Pillars of Engineering */}
+        {/* 4 Pillars of Engineering (Smooth Rounded-3xl) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {engineeringPillars.map((pillar) => (
             <div
               key={pillar.title}
-              className="p-6 bg-neutral-900/30 border border-white/10 flex flex-col justify-between"
+              className="p-6 rounded-3xl bg-neutral-900/30 border border-white/10 flex flex-col justify-between hover:border-white/20 transition-all"
             >
               <div>
                 <span className="block text-2xl font-bold font-mono text-white tabular-nums mb-1">
