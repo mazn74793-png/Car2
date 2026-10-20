@@ -13,21 +13,21 @@ export const ExperienceCenters: React.FC<ExperienceCentersProps> = ({ onBookExpe
       location: 'Carson, California, USA',
       track: '4.1-mile driver development track, kick plate & ice hill simulator',
       highlight: '911 GT3 RS Masterclass & Off-Road Course',
-      image: '/src/assets/images/hero_flagship_gt3rs_1792255768458.jpg',
+      image: '/images/hero_flagship_gt3rs_1792255768458.jpg',
     },
     {
       name: 'Porsche Experience Center Atlanta',
       location: 'One Porsche Drive, Georgia, USA',
       track: '1.6-mile handling circuit, low-friction handling & dynamics area',
       highlight: 'Heritage Gallery & Restaurant 356',
-      image: '/src/assets/images/car_config_studio_1792255768943.jpg',
+      image: '/images/car_config_studio_1792255768943.jpg',
     },
     {
       name: 'Porsche Experience Center Leipzig',
       location: 'Porschestraße 1, Leipzig, Germany',
       track: 'FIA-certified circuit replicating iconic motorsport corners',
       highlight: 'Factory Collection & Off-Road Wilderness Terrain',
-      image: '/src/assets/images/hero_taycan_ev_1792255769211.jpg',
+      image: '/images/hero_taycan_ev_1792255769211.jpg',
     },
   ];
 

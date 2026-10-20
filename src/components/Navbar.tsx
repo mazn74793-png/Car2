@@ -114,9 +114,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             : 'bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3 sm:gap-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 flex items-center justify-between gap-3 sm:gap-6">
           {/* Brand Wordmark & Official Service Label */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3.5 shrink-0">
             <a
               href="#"
               onClick={(e) => {
@@ -126,10 +126,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               }}
               className="flex flex-col group cursor-pointer select-none"
             >
-              <span className="text-xl sm:text-2xl font-bold tracking-[0.35em] uppercase text-neutral-900 dark:text-white group-hover:opacity-85 transition-opacity whitespace-nowrap">
-                PORSCHE
-              </span>
-              <span className="text-[10px] tracking-widest uppercase font-mono text-[#d5001c] font-semibold">
+              <div className="flex items-center gap-2">
+                <span className="text-xl sm:text-2xl font-black tracking-[0.35em] uppercase text-neutral-900 dark:text-white group-hover:opacity-90 transition-opacity whitespace-nowrap">
+                  PORSCHE
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[#d5001c] animate-pulse" />
+              </div>
+              <span className="text-[10px] tracking-[0.2em] uppercase font-mono text-[#d5001c] font-bold">
                 {isAr ? 'مركز الصيانة المعتمد' : 'Certified Service Center'}
               </span>
             </a>

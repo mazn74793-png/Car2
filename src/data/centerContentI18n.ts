@@ -104,7 +104,7 @@ export const CENTER_SERVICES: CenterServiceItem[] = [
         'Complimentary luxury hand wash and paint sealant',
       ],
     },
-    image: '/src/assets/images/car_config_studio_1792255768943.jpg',
+    image: '/images/car_config_studio_1792255768943.jpg',
     badge: {
       ar: 'الأكثر طلباً',
       en: 'Most Popular',
@@ -147,7 +147,7 @@ export const CENTER_SERVICES: CenterServiceItem[] = [
         'Factory genuine brake pads with full warranty',
       ],
     },
-    image: '/src/assets/images/hero_flagship_gt3rs_1792255768458.jpg',
+    image: '/images/hero_flagship_gt3rs_1792255768458.jpg',
     badge: {
       ar: 'خدمة متقدمة',
       en: 'High Precision',
@@ -190,7 +190,7 @@ export const CENTER_SERVICES: CenterServiceItem[] = [
         'ECU telemetry download and track temperature audit',
       ],
     },
-    image: '/src/assets/images/hero_flagship_gt3rs_1792255768458.jpg',
+    image: '/images/hero_flagship_gt3rs_1792255768458.jpg',
     badge: {
       ar: 'خاص بطرازات GT',
       en: 'Motorsport Grade',
@@ -233,7 +233,7 @@ export const CENTER_SERVICES: CenterServiceItem[] = [
         'Firmware upgrade for dual-motor Launch Control',
       ],
     },
-    image: '/src/assets/images/hero_taycan_ev_1792255769211.jpg',
+    image: '/images/hero_taycan_ev_1792255769211.jpg',
     badge: {
       ar: 'سيارات كهربائية',
       en: 'E-Performance',
@@ -276,7 +276,7 @@ export const CENTER_SERVICES: CenterServiceItem[] = [
         'Official 3-year warranty certificate on paint shield',
       ],
     },
-    image: '/src/assets/images/lifestyle_leather_duffle_1792255770345.jpg',
+    image: '/images/lifestyle_leather_duffle_1792255770345.jpg',
     badge: {
       ar: 'عناية فائقة',
       en: 'Atelier Detailing',
@@ -319,7 +319,7 @@ export const CENTER_SERVICES: CenterServiceItem[] = [
         'Return delivery fully detailed and sanitized',
       ],
     },
-    image: '/src/assets/images/hero_taycan_ev_1792255769211.jpg',
+    image: '/images/hero_taycan_ev_1792255769211.jpg',
     badge: {
       ar: 'خدمة VIP',
       en: 'VIP Concierge',

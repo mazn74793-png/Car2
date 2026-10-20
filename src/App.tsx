@@ -44,7 +44,9 @@ export default function App() {
     try {
       const saved = localStorage.getItem('porsche_center_store_v4');
       if (saved) {
-        return JSON.parse(saved);
+        // Automatically migrate any legacy /src/assets/images paths to /images
+        const sanitized = saved.replace(/\/src\/assets\/images\//g, '/images/');
+        return JSON.parse(sanitized);
       }
     } catch {
       // fallback

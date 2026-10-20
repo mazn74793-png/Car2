@@ -199,7 +199,7 @@ export const CarConfigurator: React.FC<CarConfiguratorProps> = ({
               {/* Base Studio Car Image with Dynamic Color Transformations */}
               <div className="relative w-full h-full flex items-center justify-center">
                 <img
-                  src="/src/assets/images/car_config_studio_1792255768943.jpg"
+                  src="/images/car_config_studio_1792255768943.jpg"
                   alt={`Porsche 911 configured in ${selectedColor.name}`}
                   referrerPolicy="no-referrer"
                   style={{

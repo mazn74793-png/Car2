@@ -94,7 +94,7 @@ export const CenterStorySection: React.FC<CenterStorySectionProps> = ({
           <div className="lg:col-span-5 relative">
             <div className="relative aspect-[4/3] rounded-[2.75rem] overflow-hidden shadow-2xl border border-white/40 dark:border-white/10">
               <img
-                src="/src/assets/images/car_config_studio_1792255768943.jpg"
+                src="/images/car_config_studio_1792255768943.jpg"
                 alt="Porsche Certified Center"
                 className="w-full h-full object-cover"
               />

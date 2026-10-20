@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Volume2, ArrowRight, Wrench, Calendar } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2, ArrowRight, Wrench, Calendar, ShieldCheck, Cpu, Award, Car } from 'lucide-react';
 import { CenterHeroSlide } from '../types/centerTypes';
 import { Language, ThemeMode } from '../data/centerContentI18n';
 import { soundEngine } from '../utils/soundEngine';
@@ -122,38 +122,65 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({
             </p>
           </div>
 
-          {/* Performance & Center Specs Strip (Subtle Glassmorphic Fluid Card) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 p-4 sm:p-6 bg-black/40 backdrop-blur-2xl rounded-[2rem] sm:rounded-[2.25rem] border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.6)]">
-            <div>
-              <span className="block text-xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
+          {/* Performance & Center Specs Strip (Subtle Glassmorphic Telemetry Card) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-0 p-5 sm:p-6 bg-black/60 backdrop-blur-2xl rounded-[2.25rem] border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.7)] sm:divide-x divide-white/10 rtl:sm:divide-x-reverse">
+            <div className="sm:px-5 flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-neutral-400 mb-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-300">
+                  {isAr ? 'قطع أصلية' : 'Genuine Parts'}
+                </span>
+              </div>
+              <span className="block text-2xl sm:text-3xl font-black font-mono tracking-tight text-white tabular-nums">
                 {isAr ? '100%' : slide.specs.acceleration}
               </span>
-              <span className="text-[10px] sm:text-xs tracking-wider uppercase text-neutral-300">
-                {isAr ? 'قطع غيار أصلية' : 'Acceleration'}
+              <span className="text-[10px] uppercase font-mono tracking-wider text-neutral-400 mt-1">
+                {isAr ? 'ضمان شتوتغارت' : 'Stuttgart Spec'}
               </span>
             </div>
-            <div>
-              <span className="block text-xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
+
+            <div className="sm:px-5 flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-neutral-400 mb-1">
+                <Cpu className="w-3.5 h-3.5 text-sky-400" />
+                <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-300">
+                  {isAr ? 'أجهزة الفحص' : 'Diagnostics'}
+                </span>
+              </div>
+              <span className="block text-2xl sm:text-3xl font-black font-mono tracking-tight text-white tabular-nums">
                 {isAr ? 'PIWIS 4' : slide.specs.power}
               </span>
-              <span className="text-[10px] sm:text-xs tracking-wider uppercase text-neutral-300">
-                {isAr ? 'أحدث أجهزة فحص' : 'Diagnostics'}
+              <span className="text-[10px] uppercase font-mono tracking-wider text-neutral-400 mt-1">
+                {isAr ? 'فحص مصنعي حي' : 'Direct Cloud Link'}
               </span>
             </div>
-            <div>
-              <span className="block text-xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
+
+            <div className="sm:px-5 flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-neutral-400 mb-1">
+                <Award className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-300">
+                  {isAr ? 'الضمان المعتمد' : 'Warranty'}
+                </span>
+              </div>
+              <span className="block text-2xl sm:text-3xl font-black font-mono tracking-tight text-white tabular-nums">
                 {isAr ? 'عامان' : slide.specs.topSpeed}
               </span>
-              <span className="text-[10px] sm:text-xs tracking-wider uppercase text-neutral-300">
-                {isAr ? 'ضمان رسمي شامل' : 'Warranty'}
+              <span className="text-[10px] uppercase font-mono tracking-wider text-neutral-400 mt-1">
+                {isAr ? 'شامل وبلا حدود' : 'Unlimited Mileage'}
               </span>
             </div>
-            <div>
-              <span className="block text-xl sm:text-3xl font-bold font-mono tracking-tight text-white tabular-nums">
-                {isAr ? 'Macan' : 'Loaner'}
+
+            <div className="sm:px-5 flex flex-col justify-between">
+              <div className="flex items-center gap-1.5 text-neutral-400 mb-1">
+                <Car className="w-3.5 h-3.5 text-[#d5001c]" />
+                <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-300">
+                  {isAr ? 'سيارة بديلة' : 'Executive Loaner'}
+                </span>
+              </div>
+              <span className="block text-2xl sm:text-3xl font-black font-mono tracking-tight text-white tabular-nums">
+                {isAr ? 'Macan' : 'Included'}
               </span>
-              <span className="text-[10px] sm:text-xs tracking-wider uppercase text-neutral-300">
-                {isAr ? 'سيارة بديلة مجانية' : 'Loaner Car'}
+              <span className="text-[10px] uppercase font-mono tracking-wider text-neutral-400 mt-1">
+                {isAr ? 'مجانية لراحتك' : 'Complimentary'}
               </span>
             </div>
           </div>
